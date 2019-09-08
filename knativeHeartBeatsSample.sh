@@ -7,8 +7,8 @@ cleanup() {
 trap 'cleanup' SIGTERM SIGINT SIGFPE 
 shopt -u extglob; set +H
 kubectx ${1:-minikube}
-echo "Usage: $0 KO_DOCKER_REPO [ko.local|default:=gcr.io/plucky-door-2002008]" 
-KO_DOCKER_REPO=${1:-grc.io/plucky-door-200208}
+echo "Usage: $0 [kubectx] [ko.local|default:=gcr.io/plucky-door-2002008]" 
+export KO_DOCKER_REPO=${2:-gcr.io/plucky-door-2002008}
 mkdir -p ~/go/src/knative.dev/
 cd ~/go/src/knative.dev/
 export PROJECT_ID=$(gcloud config get-value core/project)
@@ -25,6 +25,7 @@ sleep 2
 ko publish .
 sleep 5
 echo heartbeat source logs
+kubectl get pod -A
 kubectl logs --tail=50 -l eventing.knative.dev/source=heartbeats-sender 
 echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo heartbeat receiver logs
